@@ -89,7 +89,7 @@ exportPackageFiles() {
     sudo -u calbuilder makepkg --printsrcinfo > .SRCINFO
     exportFile "srcInfo" ".SRCINFO"
 
-    pkgFile=$(sudo -u calbuilder makepkg --packagelist)
+    pkgFile=$(sudo -u calbuilder makepkg --packagelist | head -1)
     pkgFile=$(basename "$pkgFile")
     if [ -f "$pkgFile" ]; then
         exportFile "pkgFile" "$pkgFile"
