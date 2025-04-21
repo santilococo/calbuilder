@@ -17,6 +17,7 @@ addUser() {
 installAurDeps() {
     aurPkgs=()
     sudo -u calbuilder makepkg --printsrcinfo > .SRCINFO
+    chown calbuilder:calbuilder .SRCINFO
     regExp="^[[:space:]]*\(make\)\?depends\(.\)* = \([[:alnum:][:punct:]]*\)[[:space:]]*$"
     mapfile -t pkgDeps < <(sed -n -e "s/$regExp/\3/p" .SRCINFO)
     for pkgDep in "${pkgDeps[@]}"; do
@@ -72,8 +73,7 @@ namcapAnalysis() {
     pacman -S --noconfirm namcap
     mapfile -t warnings < <(namcap PKGBUILD)
     printWarnings "PKGBUILD"
-    pkgFile=$(sudo -u calbuilder makepkg --packagelist)
-    pkgFile=$(basename "$pkgFile")
+    pkgFile="$(basename $(sudo -u calbuilder makepkg --packagelist | head -1))"
     if [ -f "$pkgFile" ]; then
         mapfile -t warnings < <(namcap "$pkgFile")
         printWarnings "$pkgFile"
@@ -87,10 +87,10 @@ exportFile() {
 
 exportPackageFiles() {
     sudo -u calbuilder makepkg --printsrcinfo > .SRCINFO
+    chown calbuilder:calbuilder .SRCINFO
     exportFile "srcInfo" ".SRCINFO"
 
-    pkgFile=$(sudo -u calbuilder makepkg --packagelist | head -1)
-    pkgFile=$(basename "$pkgFile")
+    pkgFile="$(basename $(sudo -u calbuilder makepkg --packagelist | head -1))"
     if [ -f "$pkgFile" ]; then
         exportFile "pkgFile" "$pkgFile"
         if [ -n "$gpgPrivateKey" ]; then
