@@ -38,7 +38,7 @@ jobs:
     - id: calbuilder
       uses: santilococo/calbuilder@master
         pkgDir: "libxft-bgra"
-        gpgPublicKey: "199980CE93F18E62"
+        gpgPublicKey: "C03E1F00B0461E7F"
         gpgPrivateKey: "${{ secrets.GPG_PRIVATE_KEY }}"
         gpgPassphrase: "${{ secrets.GPG_PASSPHRASE }}"
     - uses: actions/upload-artifact@v2
@@ -47,6 +47,14 @@ jobs:
           ${{ steps.calbuilder.outputs.srcInfo }}
           ${{ steps.calbuilder.outputs.pkgFile }}
 ```
+
+For debugging purposes, you can run it directly with docker or podman as well. For example:
+
+```
+docker run -e "INPUT_PKGDIR=libxft-bgra" -e "INPUT_GPGPUBLICKEY=C03E1F00B0461E7F" -e "INPUT_GPGPRIVATEKEY=${GPG_PRIVATE_KEY}" -e "INPUT_GPGPASSPHRASE=${GPG_PASSPHRASE}" --workdir /github/workspace -v "$HOME/calpkgs:/github/workspace" -it --entrypoint /bin/bash slococo/calbuilder
+```
+
+Make sure to include both the `--workdir` and the `/github/workspace` mount.
 
 ## Contributing <a name="contributing"></a>
 PRs are welcome.
